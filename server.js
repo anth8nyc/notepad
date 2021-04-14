@@ -37,36 +37,45 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     // req.body hosts is equal to the JSON post sent from the user
     // This works because of our body parsing middleware
-    const newNote = req.body;
-  
-    // Using a RegEx Pattern to remove spaces from newCharacter
-    // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-    // newNote.routeName = newNote.name.replace(/\s+/g, '').toLowerCase();
 
+    const newNote = req.body;
     
     newNote.id = uniqid()
-    
+
     dbfile.push(newNote);
-    console.log(dbfile)
 
     noteString = JSON.stringify(dbfile);
-
 
     fs.writeFile('./db/db.json', noteString, (err) =>
     err ? console.error(err) : console.log('Success!')
     );
 
-    // console.log(newNote);
-    // console.log(noteString);
-    // console.log(dbfile)
-    
-
-    // console.log(dbfile)
     res.json(noteString);
 });
 
 
+app.delete('/api/notes/:id', (req, res) => {
+    req.params.id;
 
+
+
+    return res.json(dbfile);
+});
+
+app.delete('/api/notes/:id', (req, res)  => {
+ let id = req.params.id ;
+    fs.readFile("./db/db.json", 'utf8', (err,data) => {
+        
+        data = JSON.parse( data );
+
+        delete data["user" + id];
+
+        console.log( JSON.stringify(data) );
+        res.status(200);
+
+        return res.send("Removed");
+    });
+})
 
 
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
